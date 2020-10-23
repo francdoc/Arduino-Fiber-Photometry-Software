@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Oct  7 15:58:15 2020
+
+@author: Franco Chiesa Docampo
+
+Interfaz para controlar 2 LEDs y trigger de la cámara. Al determinar los FPS de la cámara, las 2 señales de estimulación se autoconfiguran.
+
+"""
+
+import tkinter as tk
+import tkinter.simpledialog as sd
+import serial 
+import pandas as pd
+
+# from tkinter import *
+# from PIL import ImageTk,Image
+# import matplotlib.pyplot as plt
+
+# Conexión serial Python-Arduino
+ser = serial.Serial('/dev/cu.usbmodem1411',115200);
+
+def fps():
+    options = {'minvalue':40.0,'maxvalue':100.0}
+    userInput1 = sd.askinteger('User Input','Enter FPS (40 to 100)',**options)
+    k = 16*pow(10,6)/(64*userInput1/2)-1
+    print(f'You entered {userInput1} FPS.')
+    print(f'Trigger max value is {k}')
+    
+    ser.write(b'F')
+    a = str(userInput1)
+    ser.write(a.encode())
+
+def DC():
+    options = {'minvalue':1.0,'maxvalue':49.0}
+    userInput2 = sd.askinteger('User Input','Enter Duty-Cycle (1% to 49%)',**options)
+    print(f'You entered {userInput2}% Duty-Cycle.')
+    
+    ser.write(b'D')
+    b = str(userInput2)
+    ser.write(b.encode())
+
+def trigger():
+    userInput3 = sd.askinteger('User Input','Enter trigger')
+    print(f'You entered an ICR5 = {userInput3}.')
+
+    ser.write(b'T')
+    c = str(userInput3)
+    ser.write(c.encode())
+    
+def OK():
+    print('System configured.')
+    ser.write(b'S')
+    
+def L470_check():
+    print('L470 check mode.')
+    ser.write(b'A')
+    
+def L410_check():
+    print('L410 check mode.')
+    ser.write(b'B')
+
+def LEDs_OFF():
+    print('LEDs OFF.')
+    ser.write(b'C')
+
+root = tk.Tk()
+
+root.title("UTILICE LAS GAFAS DE SEGURIDAD")
+root.geometry('260x570')
+
+root.configure(bg='#49A')
+
+# Make the root window always on top
+root.wm_attributes("-topmost", True)
+
+root.attributes("-alpha", 1)
+
+btn1 = tk.Button(root,text="FPS", command=fps, height = 5, width = 8)
+btn1.grid(row=0,column=1,columnspan=3, padx=10, pady=10)
+
+btn2 = tk.Button(root,text="Duty-Cycle %", command=DC, height = 5, width = 8)
+btn2.grid(row=1,column=1,columnspan=3, padx=10, pady=10)
+
+btn3 = tk.Button(root,text="Trigger", command=trigger, height = 5, width = 8)
+btn3.grid(row=2,column=1,columnspan=3, padx=10, pady=10)
+
+btn4 = tk.Button(root,text="Activate", command=OK, height = 5, width = 8)
+btn4.grid(row=3,column=1,columnspan=3, padx=10, pady=10) 
+
+btn6 = tk.Button(root,text="L410 CHECK", command=L410_check, height = 5, width = 8)
+btn6.grid(row=0,column=7,columnspan=3, padx=10, pady=10)
+
+btn7 = tk.Button(root,text="L470 CHECK", command=L470_check, height = 5, width = 8)
+btn7.grid(row=1,column=7,columnspan=3, padx=10, pady=10)
+
+btn8 = tk.Button(root,text="LEDs OFF", command=LEDs_OFF, height = 5, width = 8)
+btn8.grid(row=2,column=7,columnspan=3, padx=10, pady=10)
+
+root.mainloop()
