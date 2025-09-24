@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from get_zdFF import get_zdFF
 
 # Cargar datos | Ajustar directorio de forma acorde al usuario
-folder = '/Users/marcelochiesa/Desktop/Photometry_data_processing-master/Python/' 
+folder = '/Users/user/Desktop/Photometry_data_processing-master/Python/' 
 # Nombre del archivo 
 file_name = '100fps.csv'   
         
